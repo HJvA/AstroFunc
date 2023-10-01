@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<STYLE TYPE="text/css">
+  BODY { font-size: 70%; margin-left: 2%;}
+  H1  { color: purple; margin-left: -1%;}
+  h2,h3,h4,h5,h6 { margin-left: -1%; }
+</STYLE>
+<META NAME="author" CONTENT="Henk Jan van Aalderen">
+<META NAME="description" CONTENT="HastroFunc is a computer program for symbian smart phones to compute properties of celestial bodies">
+<META NAME="keywords" CONTENT="astronomy, python, pyS60, symbian, IAU, celestial mechanics, planet, sun, moon">
+
+
+
+<head>
+   <title>HastroFunc</title>
+</head>
+
+<body BGCOLOR="silver"; >
+
+
+<H1><A NAME="ch00" ALIGN="CENTER">HastroFunc</A></H1>
+version 1.1.0<BR>
+<p>
+Copyright (c) 2008-2009 Henk Jan van Aalderen<br/>
+<HR SIZE="2" ALIGN=LEFT WIDTH="320"><br/>
+<A HREF="mailto:">henk.jan.van.aalderen@gmail.com</A></p>
+<p>For nokia S60 3rd edition phones with python v1.4.5 ( python can be retrieved from: <A HREF="http://sourceforge.net/projects/pys60">sourceforge.net/projects/pys60</A> )
+<br/>Matrix library derived from 'mathguide' developed by Hartmut Ring</p>
+
+<!-- input type="button" value="exit" onclick="self.close()" -->
+
+<!-- contents list with jumps and returns -->
+
+<br/>
+<H2>Contents</H2>
+<UL>
+  <LI><A HREF="#ch01">Introduction</A>
+  <LI><A HREF="#ch02">Operation manual</A>
+  <LI><A HREF="#ch03">Calculated Results</A>
+</UL>
+
+<H2><A NAME="ch01">Introduction</A></H2>
+[<A HREF="#ch00">Top</A>]
+
+<p>HastroFunc is a program to calculate positions of celestial bodies like sun,moon,planets,stars. It uses the newest standards for celestial mechanics as published by the IAU (precession,nutation,frame). For moon position it uses a reduced ELP solution, and for sun,planets positions it uses a Keplerian elements solution. 
+</p>
+
+<H2><A NAME="ch02">Operation</A></H2>
+[<A HREF="#ch00">Top</A>]
+
+<p>The application has four main screens :
+<OL COMPACT>
+  <LI><A HREF="#pa01">Geographic location entry screen</A>
+  <LI><A HREF="#pa02">Celestial body and time entry screen</A>
+  <LI><A HREF="#pa03">Results screen</A>
+  <LI><A HREF="#pa04">Image screen</A>
+</OL>
+Screens can be navigated to using the left or right key. Items can be navigated to using the up/down keys. Some items can be edited after the select (center) key is pressed. To save the modified items, use the save option from the options menu.
+</p>
+
+<H3><A NAME="pa01">1.Geo Location screen</A></H3>
+[<A HREF="#ch00">Top</A>]
+<p>
+The geographical location i.e. longitude east of Greenwich, and latitude north of equator and height above sea level have to be entered here. These quantities can be retrieved from e.g. a GPS receiver, or from a program like 'Google Earth'. To add a new location, just change the name of an existing location, and save the record using the save option from the options menu. Also the UTC offset which is the time zone plus the daylight saving hour, has to be entered.
+</p>
+
+<H3><A NAME="pa02">2.Body & time screen</A></H3>
+[<A HREF="#ch00">Top</A>]
+<br/>
+A celestial body or constellation can be picked from a list. Use 'Pick celestial object...'  from the options menu. The following possibilities exist here:
+<ul COMPACT>
+  <li>planet
+    <br/>One of the nine planets of our solar system can be selected 
+  <li>Sun
+  <li>Moon
+  <li>star
+    <br/>Pick from a list of stars, restricted by magnitude<4 (i.e. stars visible by naked eye in urban area)
+  <li>constellation
+    <br/>The average position of all stars in the constellation will be monitored.
+  <li>star in constellation
+    <br/>The list of stars to pick from will be limited by the constellation which was picked before.
+</ul>
+<p>
+Also the date and time of interest can be entered.
+</p>
+<p>
+Optional, a precision number [1..9] can be entered. Note: high precision requires more calculation time.
+</p>
+
+<H3><A NAME="pa03">3.Results screen</A></H3>
+[<A HREF="#ch00">Top</A>]
+<p>
+The results screen shows numerical properties of the selected body at the actual or specified time and location. To scroll a particular subject e.g. time (step by hours or by days) or planets or stars first pick one of the subjects to be scrolled from the menu. Then use the up/down keys to scroll i.e. jump to the next or the previous item.
+</p>
+
+<H3><A NAME="pa04">4.Image screen</A></H3>
+[<A HREF="#ch00">Top</A>]
+<br/>
+
+Shows pictures of the selected body, or pictures related to the selected body. Use the 'right' key to see all available pictures.
+
+<H2><A NAME="ch03">Calculated Results</A></H2>
+[<A HREF="#ch00">Top</A>]
+<br/> 
+
+Both geocentric as topocentric positions are calculated.
+
+Geocentric coordinates are coordinates relative to the center of the earth. 
+Topocentric coordinates are coordinates relative to a particular place on earth.
+<UL COMPACT>
+  <LI>right ascension: angle of body along equator 
+  <LI>declination: angle of body along meridian
+  <LI>distance: distance of body in au (earth-sun distance units) or ly (light years)
+  <LI>azimuth: the compass angle of the body including north-east-south-west abbreviation.
+  <LI>elevation: the altitude angle relative to the horizon.
+  <LI>risetime: local time the body rises above horizon as seen by observer
+  <LI>settime: local time the body sets below horizon as seen by observer
+  <LI>phase: angle at wich sun rays hit the body as seen from the earth
+</UL>
+
+<H3><A NAME="pa05">Methods</A></H3>
+[<A HREF="#ch00">Top</A>]
+<br/>
+To compute properties as shown in the results screen, the following list shows the executed methods:
+<UL COMPACT>
+  <LI>Get the position of the body (Ra,Declination,distance) at the required time in the J2000 ICRF frame. For stars this can be read from a catalog (HastroFunc uses the Tycho catalogs), for planets, moons and suns the position must be calculated using oscillating elements and Kepler's laws. For higher precision for planets and moon, a list of trigonometric terms will be used, to correct for perturbations e.g. caused by other planets.
+  <LI> For higher precision for stars: apply corrections for proper motion and for planets: apply iterative correction for lighttime.
+  <LI>Apply Precession, Nutation and polar motion corrections. (i.e. Rotate to the CIRS system) These corrections are required to correct for the changing position of the earth rotation axis. For low precision, these corrections consist of a simple matrix multiplication. For high precision a long list of trigonometric terms has to be calculated.  
+  <LI>Rotate resulting CIRS vector to the observers frame. For low precision this consists of a series of vector rotations: Earth rotation angle, longitude, latitude of observer location assuming the earth is exactly spherical. For high precision a number of conversions will performed according to IAU prescriptions: CIRS->TIRS->ITRS (WGS84 ellipsoid)->TopoCentric 
+  <LI>for high precision, a correction for light refraction has to be applied to the topocentric coordinates. 
+  <LI>Computation of rise- and set-times. For stars this consists of two rotations to the horizon using sidereal time. For planets, moon and sun, it is an iterative process as these bodies move while time flows.
+  <LI>Computation of the constellation where the body is in. For stars this has been done in advance, using the IAU constellation boundaries of 1989. For other bodies it is approximated by finding the shortest distance to the average position of all stars in a constellation. 
+</UL>
+
+
+
+<br/>
+<ADDRESS>hjva jan 2009</ADDRESS><br/>
+</body>
+</html>
+
