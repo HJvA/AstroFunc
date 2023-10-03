@@ -7,7 +7,7 @@ from Rotation import Coordinate,Angle,DegAngle
 from AstroTime import AstroTime
 
 AU = 1.495978e11  # m   (astronomical unit)
-ly = 9.46053e15   # m   (light year)
+ly = 9.46053e15   # m   (light year) 
 pc = 3.085678e16  # m   (parsec)
 
 modPath = os.path.split(sys.argv[0])[0]  #get prg name
