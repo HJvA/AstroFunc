@@ -1,5 +1,5 @@
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 
 # from document Astron.Astrophys 282
 # Numerical expressions for precession formulae and mean elements for the moon and the planets

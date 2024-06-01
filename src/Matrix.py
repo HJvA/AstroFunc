@@ -5,8 +5,14 @@
 # mathguide Version 1.1b2 
 # Copyright 2004-2008 Hartmut Ring
 
-import operator,  math  #os, random, re, inspect
+import sys, math  #os, random, re, inspect
+isMICPYTH = sys.implementation.name == "micropython"
+if not isMICPYTH:
+    import operator
+    from functools import reduce  # hjva
 from random import randrange
+
+#from typing import Tuple
 
 #===============================================================
 #  Elementary Functions
@@ -19,7 +25,10 @@ def isInteger(n):
         <b>isInteger(n)</b><br/>
         gibt <code>True</code> zurück genau dann, wenn n vom Typ <code>int</code> oder <code>long</code> ist.
     """
-    return type(n) in (int, long)
+    if isinstance(n, float):
+        return n.is_integer()
+    return isinstance(n, int) # hjva or n.is_integer()
+    #return type(n) in (int, long)
 
 def isNatural(n):
     return isInteger(n) and n > 0
@@ -38,7 +47,9 @@ def sum(v):
     """
     if len(v) == 0:
         return 0
-    return reduce(operator.add, v)
+    if not isMICPYTH:
+        return reduce(operator.add, v)
+    return reduce(lambda a, b: a+b, v)
 
 #............................................................
 
@@ -54,7 +65,9 @@ def product(v):
     """
     if len(v) == 0:
         return 1
-    return reduce(operator.mul, v)
+    if not isMICPYTH:
+        return reduce(operator.mul, v)
+    return reduce(lambda a, b: a*b, v)
 
 #............................................................
 
@@ -134,6 +147,10 @@ def lcm(a, b):
 #  Rationale Zahlen, Kettenbrüche
 #---------------------------------------------------------------
 
+class  _MathGUIdeError(Exception):  #hjva
+    pass
+
+
 class Rational (object): # Rational numbers # Rationale Zahlen
     """ Class <code>Rational</code>: Rational numbers<br/>
         <b>Rational(p, q)</b> Example: <code>Rational(3,17)</code><br/>
@@ -184,8 +201,10 @@ class Rational (object): # Rational numbers # Rationale Zahlen
         """ Constructor
         """
         if type(p) == float:
-            r = ContFrac(p).toRational()
-            self.p, self.q = r.p, r.q
+            #r = ContFrac(p).toRational()
+            r = p.as_integer_ratio()  # hjva 2023
+            self.p, self.q = r[0], r[1]
+            #self.p, self.q = r.p, r.q
             return
         if type(p) == Rational:
             self.p, self.q = p.p, p.q
@@ -298,6 +317,25 @@ class Rational (object): # Rational numbers # Rationale Zahlen
         if not isinstance(b, Rational):
             a,b = a._unify(b)
         return cmp(a.p*b.q, b.p*a.q)
+
+    def __eq__(self, other): # hjva
+        if isinstance(other, float):
+            return other == self.__float__()
+        if isinstance(other, int):
+            return other == self.__int__()        
+        return self.p*other.q == other.p*self.q
+    def __lt__(self, other):  #hjva
+        if isinstance(other, float):
+            return self.__float__() < other
+        if isinstance(other, int):
+            return self.__int__() < other
+        return self.p*other.q < other.p*self.q
+    def __gt__(self, other):  #hjva
+        if isinstance(other, float):
+            return self.__float__() > other
+        if isinstance(other, int):
+            return self.__int__() > other
+        return self.p*other.q > other.p*self.q
 
     def __neg__(self):
         """ Unary operator -
@@ -492,11 +530,14 @@ class Vector (list): # Vectors # Vektoren
         """ Constructor
         """
         if isinstance(n, list):
-            list.__init__(v, n)
+            super().__init__(n)  # hjva
+            #list.__init__(v, n)
         elif isinstance(n, tuple):
-            list.__init__(v, list(n))
+            super().__init__(list(n))  #hjva
+            #list.__init__(v, list(n))
         else:
-            assert 1  # hjva : what about strings?
+            super().__init__([x for x in n])  #hjva
+            #assert 1  # hjva : what about strings?
 
 #    @staticmethod
     def fromFunction(n, fn, offset=0):
@@ -529,6 +570,12 @@ class Vector (list): # Vectors # Vektoren
         """
         return Vector([toNumber(x) for x in s.split(",")])
     fromString = staticmethod(fromString) # hjva for S60 version of python
+
+    #def __getitem__(V, i):  #hjva
+    #    return V[i] # V.__getitem__(i)
+    #__getitem__ = staticmethod(__getitem__)
+    def __getitem__(self, index):  # hjva
+        return super().__getitem__(index)
 
     def __repr__(A):
         """ Object representation as string
@@ -844,7 +891,8 @@ class Matrix (Vector): # Matrices # Matrizen
         if isinstance(i, tuple):
             return A[i[0]][i[1]]
         else:
-            return Vector.__getitem__(A, i)
+            #return Vector(A[i])  # hjva
+            return Vector.__getitem__(A, i) 
 
     def __setitem__(A, i, x):
         """ Definition of the Index operator [] for assignments
@@ -1457,7 +1505,7 @@ def fromTo(a, b, step=1):
 if __name__ == '__main__':
     from math import log, exp
     v =  Vector([Rational(i,7) for i in fromTo(1 , 8)])
-    print v
+    print( v)
     r = Rational(5,11)
     # Alternative Definitionen für die gleiche Matrix:
     A1 = Matrix([[Rational(2,3), 1, 1, 0],
@@ -1467,27 +1515,28 @@ if __name__ == '__main__':
 #                    3,  5, 0, 1""")
 
     A = Matrix.fromString('2/3, 1, 1, 0;  3, 5, 0, 1')  # hjva !!! not the same
-    print
-    print 'A.height=%d A.width=%d' % (A.height(),A.width())
-    print
+    print("A eq A1:{}".format(A == A1))
+    print('A.height=%d A.width=%d' % (A.height(),A.width()))
+    print (A._pp('A =    '))
+    print()
 
-#    B = A.submatrix(1,1,2,2)
-    B = A1.submatrix(0,0,2,2)   # hjva 080323
-    print B._pp('B =    ')
-    print B.inverse()._pp('B^-1 = ')
-    print Matrix.id(1)._pp('I1 = ')
-    print Matrix.id(2)._pp('I2 = ')
+    B = A.submatrix(0,1,2,2)
+    #B = A1.submatrix(0,0,2,2)   # hjva 080323
+    print (B._pp('B =    '))
+    print (B.inverse()._pp('B^-1 = '))
+    print (Matrix.id(1)._pp('I1 = '))
+    print (Matrix.id(2)._pp('I2 = '))
 
     # 2*4-Zufallsmatrix mit Werten im Bereich 0 bis 99
     R = Matrix.random(2, 4, 100)
-    print R._pp('Rand = ')
+    print (R._pp('Rand = '))
     # Transponierte Matrix
     # (lässt sich auch als R.transpose() schreiben)
     T = ~R
-    print T._pp('Tranpose = ')
+    print (T._pp('Tranpose = '))
     # Produktmatrix
     P = R * T
-    print P._pp('Product = ')
+    print (P._pp('Product = '))
 
     
     # Determinante von P
@@ -1495,8 +1544,8 @@ if __name__ == '__main__':
     
     #b = Matrix([[Rational(5)],[Rational(1)]])
     b = Matrix('5;1')
-    print
-    print 'b.height=%d b.width=%d' % (b.height(),b.width())
+    print()
+    print ('b.height=%d b.width=%d' % (b.height(),b.width()))
 
     # Gaußsche Methode der kleinsten Quadrate:
     # Optimale Parabel durch die Punkte
@@ -1510,28 +1559,28 @@ if __name__ == '__main__':
 
     #bs = ~Matrix([[2,1,1,0,3]])
     bs = Matrix.fromString('2; 1; 1; 0; 3')
-    print As.leastSquares(bs)
+    print (As.leastSquares(bs))
 
     #------------- Lineare Funktion:
     data1 = [[3,3], [6,3], [9,6]]
-    fn1 = ['x', '1']
-    print 'fit(%s, %s):' % (str(data1), str(fn1))
-    print fit(data1, fn1)
+    fn1 = ['1', 'x']
+    print ('fit(%s, %s):' % (str(data1), str(fn1)))
+    print (fit(data1, fn1))
     #plot (x=3, 9, eval(f))
 
     #------------- Parabel:
     data2 = [[-1,2], [0,2], [1,1], [2,0]]
     fn2 = ['1', 'x', 'x**2']
-    print 'fit(%s, %s):' % (str(data2), str(fn2))
-    print fit(data2, fn2)   # (37/20 * 1) + (-9/20 * x) + (-1/4 * x**2)
+    print ('fit(%s, %s):' % (str(data2), str(fn2)))
+    print (fit(data2, fn2))   # (37/20 * 1) + (-9/20 * x) + (-1/4 * x**2)
     #plot (x=-1, 2, eval(f))
 
     #------------- Transzendente Funktion:
     #from math import log, exp
     data3 = [[1,1],[2,1],[3,3],[4,8]]
     fn3 = ['1', 'x*log(x)', 'exp(x)']
-    print 'fit(%s, %s):' % (str(data3), str(fn3))
-    print fit (data3, fn3)  # (0.4117 * 1) + (-0.2956 * x*log(x)) + (0.1695 * exp(x))
+    print ('fit(%s, %s):' % (str(data3), str(fn3)))
+    print (fit (data3, fn3))  # (0.4117 * 1) + (-0.2956 * x*log(x)) + (0.1695 * exp(x))
     #plot (x=1, 4, eval(f))
 
 

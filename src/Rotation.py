@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 
 # dd     by   update
 # 090211 hjva OutProduct
@@ -51,7 +51,7 @@ class RotMatrix(Matrix):
                 TmpM *= SinPhi
                 self += TmpM
                 
-            elif type(RotAxis) in (int,long):
+            elif isinstance(RotAxis, int): # type(RotAxis) in (int,long):
                 if RotAxis==RotAx.R1:
                     Matrix.__init__(self,
                         [[1,   0,     0],
@@ -116,7 +116,7 @@ class Angle:
         """
         if type(ang)==float:   # assume radian
             self.rad = ang 
-        elif type(ang)==str or isinstance(ang, unicode):   # parse string trying different formats
+        elif isinstance(ang, str): # type(ang)==str or isinstance(ang, unicode):   # parse string trying different formats
             ang.lstrip()
             neg = ang[0]=='-'
             if neg:
@@ -257,7 +257,7 @@ class DegAngle(Angle):
     """ as Angle but accept degrees,minutes,seconds as constructor args
     """
     def __init__(self, deg=0,min=0,sec=0):
-        if type(deg) in (float,int,long):   # now assume degrees
+        if isinstance(deg, float) or isinstance(deg, int): # type(deg) in (float,int,long):   # now assume degrees
             Angle.__init__(self, (deg +(min+sec/60.0)/60.0) * self.Deg2Rad)
         elif isinstance(deg, Rational):
             Angle.__init__(self, (deg.toFloat()+(min+sec/60.0)/60.0) * self.Deg2Rad)
@@ -267,7 +267,7 @@ class DegAngle(Angle):
         return self.deg
 class ArcsAngle(Angle):
     def __init__(self, ang):
-        if type(ang) in (float,int,long):   # now assume arcs
+        if isinstance(ang, float) or isinstance(ang, int): #type(ang) in (float,int,long):   # now assume arcs
             Angle.__init__(self, ang * self.arcSec2Rad)
         elif isinstance(ang, Rational):
             Angle.__init__(self, ang.toFloat() * self.arcSec2Rad)
@@ -361,54 +361,54 @@ class PolarCoord(Coordinate):
                 ])
 
 def _test():
-    print 'Rotation test '
+    print ('Rotation test ')
     lat = Angle(u'5h59m30s')
     lat = Angle(u'6h01m30s')
     lon = Angle(u"-51°59'59.49\"")
     #lon = Angle(u"51*30'30\"")
-    print 'lon=%s' % lon  #.__repr__().encode('iso-8859-1')
+    print ('lon=%s' % lon)  #.__repr__().encode('iso-8859-1')
     s ='lat=%s =|%s| = %s' % (lat, lat.Modulo(), lat.AsHHMMSS())
-    print s
+    print (s)
 
     ang = DegAngle(180,12,10)
     for i in range(16):
-        print 'ang=%.6f (%s) |ang|=%.6f lon=%s phase=%s' %\
-           (ang.deg, ang.AsNESW(DegAngle(0)),ang.Modulo(0.5).deg, ang.AsHHMMSS(), ang.AsMoonPhase())
+        print ('ang=%.6f (%s) |ang|=%.6f lon=%s phase=%s' %\
+           (ang.deg, ang.AsNESW(DegAngle(0)),ang.Modulo(0.5).deg, ang.AsHHMMSS(), ang.AsMoonPhase()))
         ang += DegAngle(22,12,9.9)
 
     vec =PolarCoord(DegAngle(45.0),DegAngle(0.0), math.sqrt(2.0))
-    print vec
+    print (vec)
 
     vec = Coordinate([1.0, 0.0, 1.0])
     pol = vec.Polar()
     try:
-        print u"\n%s \n polar=%s" % (vec, pol)
+        print (u"\n%s \n polar=%s" % (vec, pol))
     except:
         pass
-    print
+    print()
 
     ang = DegAngle(175)
     RotM = RotMatrix(ang, RotAx.R2)
     rot = vec.Rotated(RotM)
-    print "dot (inner) product %s norm(vec)=%s norm(rot)=%s" % (vec*rot, vec.norm(), rot.norm())
-    print "VectorAngle %s" % VectorAngle(vec,rot)
-    print "cross(outer) product %s" % (vec.OutProduct(rot))
-    print RotM._pp('RotM =')
-    print
+    print ("dot (inner) product %s norm(vec)=%s norm(rot)=%s" % (vec*rot, vec.norm(), rot.norm()))
+    print ("VectorAngle %s" % VectorAngle(vec,rot))
+    print ("cross(outer) product %s" % (vec.OutProduct(rot)))
+    print (RotM._pp('RotM ='))
+    print ()
     try:
-        print u"\n%s \n polar=%s" % (rot, rot.Polar())
+        print (u"\n%s \n polar=%s" % (rot, rot.Polar()))
     except:
         pass
-    print
+    print()
     RotM.Rotate(Angle('-60'), RotAx.R3)
    # ang = Angle('-30Â°')
    # RotM = RotMatrix(ang, 1)
-    print RotM._pp('RotM -30=')
+    print (RotM._pp('RotM -30='))
     rot.Rotate(RotM)
-    print
-    print 'rotated back=',rot
+    print()
+    print ('rotated back=',rot)
     try:
-        print u"%s \n polar=%s" % (vec, rot.Polar())
+        print (u"%s \n polar=%s" % (vec, rot.Polar()))
     except:
         pass
     

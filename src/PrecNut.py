@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 
 import math
 import time
@@ -92,17 +92,17 @@ def _test():
     frame = CardinalPoints(t, UTCofs=2)
 
     R = frame.GCRStoCIRS()
-    print R._pp('NPB matrix')
+    print (R._pp('NPB matrix'))
 
-    print u'\n'
+    print (u'\n')
     cip = frame.CIP()
-    print 'cip=',cip
-    print 'equinox=',frame.Equinox()
-    print u'\n'
+    print ('cip=',cip)
+    print ('equinox=',frame.Equinox())
+    print (u'\n')
 
-    print "Polar Motion"
+    print ("Polar Motion")
     t2t = frame.T2T()
-    print t2t._pp(u'T2T=')
+    print (t2t._pp(u'T2T='))
 
 if __name__ == '__main__':
     _test()

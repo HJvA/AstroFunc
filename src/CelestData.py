@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 
 import sys
 import math
@@ -35,30 +35,34 @@ if not dbStars:
         return _Stars.keys()
     class dbStarCat:
         pass
-
 else:
-    from AnyDB import AnyDB
+    from AnyDB import AnyDB,dbConnect
     wildcard='*'
-    if sys.platform=="win32":
-        if atPhone:
-            import btDBclient
-            #ConStr = os.path.join(datPath, "Stars.db")
-            ConStr = "stars.db"
-            dbms = btDBclient.connect(ConStr)
-        else:
-            import adodbapi
-            dsn='dsCATdat'
-            provider='MSDASQL'  # ODBC for OLEDB
-            dbms = adodbapi.connect('Data Source=%s;Provider=%s;'% (dsn,provider))
-            wildcard='%%'
+    dbms = dbConnect('stars.db', atPhone)
+    if not dbms:
+        if sys.platform=="win32":
+            if atPhone:
+                import btDBclient
+                #ConStr = os.path.join(datPath, "Stars.db")
+                ConStr = "stars.db"
+                dbms = btDBclient.connect(ConStr)
+            else:
+                import adodbapi
+                dsn='dsCATdat'
+                provider='MSDASQL'  # ODBC for OLEDB
+                dbms = adodbapi.connect('Data Source=%s;Provider=%s;'% (dsn,provider))
+                wildcard='%%'
+        elif sys.platform=="symbian_s60":
+            import os,dbS60
+            if '--dat' in sys.argv:
+                datPath = sys.argv[sys.argv.index('--dat')+1]
 
-    elif sys.platform=="symbian_s60":
-        import os,dbS60
-        if '--dat' in sys.argv:
-            datPath = sys.argv[sys.argv.index('--dat')+1]
-
-        ConStr = os.path.join(datPath, r'stars.db')
-        dbms = dbS60.connect(ConStr)
+            ConStr = os.path.join(datPath, r'stars.db')
+            dbms = dbS60.connect(ConStr)
+        elif sys.platform=="linux":
+            from sqlite3 import connect,OperationalError
+            ConStr = os.path.join(datPath, r'stars.db')
+            dbms=connect(ConStr, check_same_thread=False)
 
     class dbStarCat(AnyDB):
         """ define database structure by overriding virtual members from AnyDB
@@ -124,14 +128,14 @@ def _test():
     #lst = StarsList("WHERE Vapparent<2 AND NOT name IS NULL")
     #lst = StarsList("WHERE distance<9.0")
     lst = StarsList("WHERE (Vapparent<6.5 OR distance<4) ORDER BY Vapparent")
-    print lst," len=%d" % len(lst)
+    print (lst," len=%d" % len(lst))
     idx=15
     obj = StarObj(lst[idx])
-    print "%s geocentric J2000 coord: " % lst[idx],obj
+    print ("%s geocentric J2000 coord: " % lst[idx],obj)
     obj = StarObj('arcturus')
     if not obj is None:
-        print 'Arcturus','Ra=%s,Decl=%s,Vappar=%f' % \
-              (obj.Longitude().AsHHMMSS(), obj.Latitude(), obj.Vapparent)
+        print ('Arcturus','Ra=%s,Decl=%s,Vappar=%f' % \
+              (obj.Longitude().AsHHMMSS(), obj.Latitude(), obj.Vapparent))
 
 if __name__ == '__main__':
     _test()

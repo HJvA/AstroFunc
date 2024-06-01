@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# info @ henk.jan.van.aalderen@gmail.com
+# info @ 
 
 import sys,os
 from AstroTypes import pn

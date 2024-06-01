@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 
 import math
 import PrecNut
@@ -273,53 +273,53 @@ if __name__ == '__main__':
 
         #frame.UTCOffset =1
         frame.Precision = 4
-        print
-        print 'GeoLoc lon=%s lat=%s tm=%s UT1=%s' % \
+        print()
+        print ('GeoLoc lon=%s lat=%s tm=%s UT1=%s' % \
            (frame.GeoLoc.Longitude,frame.GeoLoc.Latitude, \
-            frame.LocalTime().AsHHMMSS(),frame.UT1().AsHHMMSS())
+            frame.LocalTime().AsHHMMSS(),frame.UT1().AsHHMMSS()))
         #    frame.GeodeticLatitude= Angle('52.385639')  # wallace example
         #    frame.GeodeticLongitude= Angle('9.712156')
         
-        print "Celestial to terrestrial"
+        print ("Celestial to terrestrial")
         G2I = frame.GCRStoITRS()
-        print G2I._pp(u'GCRStoITRS=')
+        print (G2I._pp(u'GCRStoITRS='))
 
-        print RotMatrix(frame.ERA(), 2)._pp(u'Low Precision=')
+        print (RotMatrix(frame.ERA(), 2)._pp(u'Low Precision='))
 
-        print "GeoCentric to TopoCentric"
+        print ("GeoCentric to TopoCentric")
         I2T = frame.ITRStoTopo()
-        print I2T._pp(u'ITRStoTopo=')
+        print (I2T._pp(u'ITRStoTopo='))
     
         frame.Precision = 3
         for i in range(2):
             obj = ELPmpp02.Moon(frame, frame.Precision)
-            print
-            print 'Moon@precision %d' % frame.Precision
-            print "Ra=%s, decl=%s, dist=%s" % frame.Viewing(obj).Polar()
-            print obj.__class__.__name__,'Ra,Decl=%s, %s' % (obj.Longitude().AsHHMMSS(), obj.Latitude())
-            print ' azim=%s' % frame.Azimuth(obj),' (',frame.Azimuth(obj).AsNESW(),') elev=%s' % frame.Elevation(obj)
-            print 'LHA=%s' % (frame.ERA() + obj.Longitude() - frame.GeoLoc.Longitude).Modulo()
-            print 'RiseTime=%s Transit=%s SetTime=%s' % \
+            print()
+            print ('Moon@precision %d' % frame.Precision)
+            print ("Ra=%s, decl=%s, dist=%s" % frame.Viewing(obj).Polar())
+            print (obj.__class__.__name__,'Ra,Decl=%s, %s' % (obj.Longitude().AsHHMMSS(), obj.Latitude()))
+            print (' azim=%s' % frame.Azimuth(obj),' (',frame.Azimuth(obj).AsNESW(),') elev=%s' % frame.Elevation(obj))
+            print ('LHA=%s' % (frame.ERA() + obj.Longitude() - frame.GeoLoc.Longitude).Modulo())
+            print ('RiseTime=%s Transit=%s SetTime=%s' % \
                (frame.Rise_Time(obj).AsFormat('%H:%M:%S %d'),
                 frame.Transit(obj).AsFormat('%H:%M:%S %d'),
-                frame.Set_Time(obj).AsFormat('%H:%M:%S %d'))
+                frame.Set_Time(obj).AsFormat('%H:%M:%S %d')))
             frame.Precision -=1
 
-        print
+        print()
         frame.Precision = 4
         for i in range(6):
             obj = Kepler.Sun(frame)
             #obj= KeplerPlan.Planet(KeplerData.pn.Saturn, frame)
-            print '%s   loctime=%s GMST=%s JD=%s' %\
-              (obj.name, frame.LocalTime().AsHHMMSS(),frame.GMST(), frame.JulianDay())
+            print ('%s   loctime=%s GMST=%s JD=%s' %\
+              (obj.name, frame.LocalTime().AsHHMMSS(),frame.GMST(), frame.JulianDay()))
             #print "Ra=%s, decl=%s, dist=%s" % frame.Viewing(obj).Polar()
-            print obj.__class__.__name__,'Ra,Decl=%s, %s' % (obj.Longitude().AsHHMMSS(), obj.Latitude())
-            print ' azim=%s' % frame.Azimuth(obj),' (',frame.Azimuth(obj).AsNESW(),') elev=%s' % frame.Elevation(obj)
-            print 'LHA=%s' % (frame.ERA() + obj.Longitude() - frame.GeoLoc.Longitude).Modulo()
-            print 'RiseTime=%s Transit=%s SetTime=%s' % \
+            print (obj.__class__.__name__,'Ra,Decl=%s, %s' % (obj.Longitude().AsHHMMSS(), obj.Latitude()))
+            print (' azim=%s' % frame.Azimuth(obj),' (',frame.Azimuth(obj).AsNESW(),') elev=%s' % frame.Elevation(obj))
+            print ('LHA=%s' % (frame.ERA() + obj.Longitude() - frame.GeoLoc.Longitude).Modulo())
+            print ('RiseTime=%s Transit=%s SetTime=%s' % \
                (frame.Rise_Time(obj).AsFormat('%H:%M:%S %d'),
                 frame.Transit(obj).AsFormat('%H:%M:%S %d'),
-                frame.Set_Time(obj).AsFormat('%H:%M:%S %d'))
+                frame.Set_Time(obj).AsFormat('%H:%M:%S %d')))
             frame.IncTime(3600)
 
     _test()

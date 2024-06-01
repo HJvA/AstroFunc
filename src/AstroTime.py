@@ -1,70 +1,18 @@
 # -*- coding: iso-8859-1 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 
 import math
 import time
-import sys,operator
+import sys,os
 from Rotation import Angle,DegAngle,ArcsAngle,SQR
-
+#if __name__ == "__main__":
+sys.path.append('.')
+from submod.pyCommon.timtls import JulianDay,TimeTup
 
 JulianDayJ2000 = 2451545.0  # 1 jan 2000 12h TT at geocenter (epoch J2000)
 JulianDaysPerCentury = 36525.0
-SecondsPerDay = 86400.0  #3600*24
-
-def _JulianDay (Year,Month,Day, Hour=0,Minute=0,Second=0):
-    """calculate number of days since beg of year -4712  (=JDN)
-       Astron.Algorith chap.7
-    """
-    if Month==1 or Month==2:
-        Month += 12
-        Year -= 1
-    JD = (Hour + (Minute + Second/60.0) /60) /24
-    JD += math.floor(365.25 * (Year + 4716)) + \
-          math.floor(30.6001 * (Month+1)) + \
-          Day - 1524.5
-    if Year>1582 or \
-       (Year==1582 and
-        (Month>10 or (Month==10 and Day>4))):
-       A = math.floor(Year/100.0)
-       JD += 2.0 - A + math.floor(A/4)
-    return JD
-
-def JulianDay (gmtime):
-    return _JulianDay(gmtime[0],gmtime[1],gmtime[2],\
-                      gmtime[3],gmtime[4],gmtime[5])
-
-def TimeTup(JulianDay):
-    """ return python time struct
-        Meeus Astron.Algorith chap.7
-        note : not effective with mktime below year 1970
-    """
-    F,Z = math.modf(JulianDay+0.5)
-    wd = int(Z % 7)
-    if Z<2299161:
-        A=Z
-    else:
-        alp = math.floor((Z-1867216.25)/36524.25)
-        A = Z+1+alp-math.floor(alp/4)
-    B=A+1524
-    yy=int((B-122.1)/365.25)
-    D = math.floor(365.25*yy)
-    mo = int((B-D)/30.6001)
-    dd = B-D-math.floor(30.6001*mo)+F
-    if mo<14:
-        mo -=1
-    else:
-        mo -=13
-    if mo>2:
-        yy-=4716
-    else:
-        yy-=4715
-    F=round(F*86400) # whole seconds
-    F,ss = divmod(F,60)
-    hh,mm = divmod(F,60)
-    tup = (yy,mo,int(dd),int(hh),int(mm),int(ss),wd,0,0)
-    return tup
-        
+SecondsPerDay = 86400.0  #3600*24 
 
 def systemUTCoffset():
     """ system UTC offset in hour
@@ -74,17 +22,16 @@ def systemUTCoffset():
         hdif+=24
     return hdif
 
-
 class AstroTime(Angle):
     """ Time in different representations
         self.rev is Nr of days (earth rotations) since J2000.0 
     """
-    def getUTCofs(self):     return self._UTCofs
+    def getUTCofs(self):
+        return self._UTCofs
     def setUTCofs(self, Hr):
         self.rev += (self._UTCofs - Hr)/24.0
         self._UTCofs = Hr
-    UTCOffset = property(fget=getUTCofs, fset=setUTCofs,
-                         doc="DST + Timezone")
+    UTCOffset = property(fget=getUTCofs, fset=setUTCofs, doc="DST + Timezone")
     
     def __init__(self, localtime, UTCofs=None):
         """ construct AstroTime class setting localtime i.e. including UTCOffset
@@ -155,6 +102,8 @@ class AstroTime(Angle):
         """ integral nr of leap seconds since 1 jan 1977
             http://maia.usno.navy.mil/ser7/tai-utc.dat
             http://maia.usno.navy.mil/ser7/historic_deltat.data
+            https://datacenter.iers.org/data/latestVersion/bulletinC.txt
+            from 2017 January 1, 0h UTC, until further notice : UTC-TAI = -37 s
         """
         return 33  # to be implemented!
 
@@ -219,17 +168,17 @@ class AstroTime(Angle):
 
 
 def _test():
-    print
+    print()
     #t =  [2008, 11, 19, 9, 0, 0] 
     t = [2000, 1, 1, 10, 0, 0]   # J2000.0
     t = [2007, 4, 5, 12, 0, 0]   #http://www.iau-sofa.rl.ac.uk/2008_0301/sofa/sofa_pn.pdf
 
     for i in range(5):  # n hours around J2000.0
        astT = AstroTime(tuple(t),0)
-       print "J%.4f JD=%.4f GMST=%s ERA=%s TT=%.4f hms=%s" % \
+       print ("J%.4f JD=%.4f GMST=%s ERA=%s TT=%.4f hms=%s" % \
           (2000+(astT.rev)/365.25, astT.JulianDay(), \
            astT.GMST().Modulo().deg,astT.ERA().deg, astT.TT(), \
-           astT.AsFormat("%a %H:%M:%S"))
+           astT.AsFormat("%a %H:%M:%S")))
           #(2000.0+(i-1.0)/24.0, astT.ERA(), astT.JulianDay(), astT.GMST(),astT.TT(), astT.AsFormat("%a %H:%M:%S"))
        t[3]+=1  
 
@@ -237,30 +186,30 @@ def _test():
     t = (1970, 1, 1, 15, 15, 0)   # deltaT formula
     t = (1961, 3, 12, 15, 15, 0)   
     JD = JulianDay(t)
-    print 'JulianDay=%#4f localtime()=%s tzone=%#f' % (JD,t,time.altzone/3600.0)
+    print ('JulianDay=%#4f localtime()=%s tzone=%#f' % (JD,t,time.altzone/3600.0))
     if t[0]>=1970:
-        print 'TimeTup=%s' % time.ctime(time.mktime(TimeTup(JD)))
-    print 'MJD=',JD - 2400000.5
+        print ('TimeTup=%s' % time.ctime(time.mktime(TimeTup(JD))))
+    print ('MJD=',JD - 2400000.5)
     astT = AstroTime(t)
-    print 'LocalTime sys=%s UTCOffset=%.1f JD=%.12g yymmdd=%s' % \
-      (astT.LocalTime().AsHHMMSS(),astT.UTCOffset,astT.JulianDay(),astT.AsFormat('%y%m%d %a'))
+    print ('LocalTime sys=%s UTCOffset=%.1f JD=%.12g yymmdd=%s' % \
+      (astT.LocalTime().AsHHMMSS(),astT.UTCOffset,astT.JulianDay(),astT.AsFormat('%y%m%d %a')))
     astT = AstroTime(astT.LocalTime(),UTCofs=1)
-    print 'LocalTime CET=%s UTCOffset=%.1f JD=%.12g repr=%s' % \
-          (astT.LocalTime().AsHHMMSS(),astT.UTCOffset,astT.JulianDay(),astT)
+    print ('LocalTime CET=%s UTCOffset=%.1f JD=%.12g repr=%s' % \
+          (astT.LocalTime().AsHHMMSS(),astT.UTCOffset,astT.JulianDay(),astT))
     astT._UTCofs = 2  # MEZT
-    print 'LocalTime CEST=%s UTCOffset=%.1f JD=%.12g repr=%s' % \
-          (astT.LocalTime().AsHHMMSS(),astT.UTCOffset,astT.JulianDay(),astT)
-    print 'UTC=%s daysUT1=%f' % (astT.UTC().AsHHMMSS(),astT.rev)
-    print 'LocalTime=',astT.LocalTime().AsHHMMSS()
-    print 'EarthRotationAngle=',astT.ERA().Modulo().deg
+    print ('LocalTime CEST=%s UTCOffset=%.1f JD=%.12g repr=%s' % \
+          (astT.LocalTime().AsHHMMSS(),astT.UTCOffset,astT.JulianDay(),astT))
+    print ('UTC=%s daysUT1=%f' % (astT.UTC().AsHHMMSS(),astT.rev))
+    print ('LocalTime=',astT.LocalTime().AsHHMMSS())
+    print ('EarthRotationAngle=',astT.ERA().Modulo().deg)
     astT.UTCOffset = 1  # CET  !!! overwrites property
-    print '!!! UTCOffset=',astT._UTCofs
-    print 'UTC=%s daysUT1=%f' % (astT.UTC().AsHHMMSS(),astT.rev)
-    print 'LocalTime=',astT.LocalTime().AsHHMMSS()
-    print 'EarthRotationAngle=',astT.ERA().Modulo().deg
-    print 'GMST=',astT.GMST().Modulo().deg
-    print 'DeltaT=',astT.DeltaT()
-    print u'\n'
+    print ('!!! UTCOffset=',astT._UTCofs)
+    print ('UTC=%s daysUT1=%f' % (astT.UTC().AsHHMMSS(),astT.rev))
+    print ('LocalTime=',astT.LocalTime().AsHHMMSS())
+    print ('EarthRotationAngle=',astT.ERA().Modulo().deg)
+    print ('GMST=',astT.GMST().Modulo().deg)
+    print ('DeltaT=',astT.DeltaT())
+    print (u'\n')
 
 if __name__ == '__main__':
     _test()

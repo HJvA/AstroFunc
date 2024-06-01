@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 
 import os,sys,math
 from Rotation import Coordinate,Angle,DegAngle
 from AstroTime import AstroTime
 
 AU = 1.495978e11  # m   (astronomical unit)
-ly = 9.46053e15   # m   (light year) 
-pc = 3.085678e16  # m   (parsec)
+ly = 9.46053e15   # m   (light year)
+pc = 3.085678e16  # m   (parsec) 
 
 modPath = os.path.split(sys.argv[0])[0]  #get prg name
 if not modPath in sys.path:
@@ -18,7 +18,7 @@ datPath = os.path.join(os.path.splitdrive(modPath)[0], r'\HastroDat')
 if not os.path.isdir(datPath):
     datPath = os.path.join(modPath, r'HastroDat')
     
-print datPath
+print (datPath)
 del modPath
 
 class bo:

@@ -1,38 +1,42 @@
 # -*- coding: utf-8 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 
 import sys,os,math
 import string
-assert sys.platform=="win32",  "only to be run on windows PC"
+#assert sys.platform=="win32",  "only to be run on windows PC"
 from CelestData import dbStarCat
 from ELPmpp02 import dbElpMain,dbElpPertub
 from Constel import dbConstels,ConstelList
+from AnyDb import dbConnect
 
 toPhone = False
 fromTxt = True
 nodb = False
 dropTbl=False
-if sys.platform=="win32":
-    if nodb:
-        DestDbms = None
-    else:
-        if toPhone:
-            import btDBclient,adodbapi
-            DestDbms=None
-            #ConStr = os.path.join(datPath, "ELP.db")
-            #ConStr = "ELP.db"
-            #DestDbms = btDBclient.connect(ConStr)
-            #dns='dsELPdat'
-            #SrcDbms = adodbapi.connect('Data Source=%s;' % (dns))
-        elif fromTxt:
-            import adodbapi
-            dbname='dsCATdat'
-            #dbname='dsELPdat'
-            DestDbms = adodbapi.connect('Data Source=%s;' % (dbname))
-            DestDbms.commit()
-        else:
-            DestDbms = None
+DestDbms = dbConnect('dbCATdat',toPhone)
+
+if not DestDbms:
+	if sys.platform=="win32":
+	    if nodb:
+	        DestDbms = None
+	    else:
+	        if toPhone:
+	            import btDBclient,adodbapi
+	            DestDbms=None
+	            #ConStr = os.path.join(datPath, "ELP.db")
+	            #ConStr = "ELP.db"
+	            #DestDbms = btDBclient.connect(ConStr)
+	            #dns='dsELPdat'
+	            #SrcDbms = adodbapi.connect('Data Source=%s;' % (dns))
+	        elif fromTxt:
+	            import adodbapi
+	            dbname='dsCATdat'
+	            #dbname='dsELPdat'
+	            DestDbms = adodbapi.connect('Data Source=%s;' % (dbname))
+	            DestDbms.commit()
+	        else:
+	            DestDbms = None
 
 
 class adoCelestData(dbStarCat):
@@ -610,7 +614,7 @@ if __name__ == '__main__':
           ('btConstelCopy', (btConstelCopy,[]))
         )
     for i in range(len(prgs)):
-        print "%d.%s" % (i,prgs[i][0])
+        print ("%d.%s" % (i,prgs[i][0]))
     prg = int(raw_input("%d..%d? " % (0,len(prgs)-1)))
     prgs[prg][1][0](*prgs[prg][1][1])  # calling the choice
  

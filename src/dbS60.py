@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 # first attempt to implement 'www.python.org/dev/peps/pep-0249/' for S60
 
 import os

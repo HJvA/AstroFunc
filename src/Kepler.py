@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 
 import math
 from Rotation import Angle,DegAngle,Coordinate,SQR,RotMatrix,RotAx,VectorAngle
@@ -169,18 +169,18 @@ class Moon(CelestialObj):
 if __name__ == '__main__':
     import time
     prec=5
-    print pn.PlanetsList()
+    print (pn.PlanetsList())
     t = time.localtime()
     t = (2009, 2, 10, 17, 0, 0)
     astm = AstroTime.AstroTime(t,UTCofs=1)
     bodies = (Sun(astm,Precision=prec), Moon(astm,Precision=prec),
               Planet(pn.Saturn, astm, Precision=prec))
     for body in bodies:
-        print body.name
+        print (body.name)
         if isinstance(body, Planet):
-            print 'HelioCentric ICRS=%s' % body.CoordICRS()
+            print ('HelioCentric ICRS=%s' % body.CoordICRS())
         #print 'GeoCentric= %s, %s, %s' % body.Polar()
-        print 'GeoCentric Ra=%s, Declination=%s, distance=%s' % \
-              (body.RightAscension().deg,body.Declination().deg,body.Distance())
+        print ('GeoCentric Ra=%s, Declination=%s, distance=%s' % \
+              (body.RightAscension().deg,body.Declination().deg,body.Distance()))
         if not (body.PhaseAngle() is None):
-            print 'PhaseAngle %s (%s)' % (body.PhaseAngle(),body.PhaseAngle().AsMoonPhase())
+            print ('PhaseAngle %s (%s)' % (body.PhaseAngle(),body.PhaseAngle().AsMoonPhase()))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 """
 Communicate with btDBserver to do manipulations on a symbian database
 Client for btDBserver which is to be run on a S60 phone

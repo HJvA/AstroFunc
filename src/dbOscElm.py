@@ -1,10 +1,10 @@
 # -*- coding: iso-8859-1 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 
 import sys,os
 from AstroTypes import pn,datPath
-from AnyDB import AnyDB
+from AnyDB import AnyDB,dbConnect
 
 class dbOscElm(AnyDB):
     """ define database structure by overriding virtual members from AnyDB
@@ -17,14 +17,21 @@ class dbOscElm(AnyDB):
     sqlInsert     ="INSERT INTO OscElm (%s) VALUES (%#.20e,%d,%d,%d)"
     sqlUpdate     ="UPDATE OscElm SET coeff=%#.20e WHERE idx=%d, elm=%d AND id=%d"
     def __init__(self):
+        dbms = dbConnect('SolSyst.db',datPath=datPath)
+        """
         if sys.platform=="win32":
             import adodbapi   # http://adodbapi.sourceforge.net/
             ConStr = 'Data Source=%s;' %   ('dsOscElm',)
             dbms = adodbapi.connect(ConStr)
-        else:   # symbian_S60 
+        elif sys.platform=="symbian_s60":
             import dbS60
             ConStr = os.path.join(datPath, "SolSyst.db")
             dbms = dbS60.connect(ConStr)
+        elif sys.platform=="linux":
+            from sqlite3 import connect,OperationalError
+            ConStr = os.path.join(datPath, "SolSyst.db")
+            dbms = connect(ConStr, check_same_thread=False)
+        """
         AnyDB.__init__(self, dbms)
 
     def write_oscelm(self, pnPlanet, KepDef, pnOrg=0):
@@ -48,7 +55,7 @@ class dbOscElm(AnyDB):
         for i in range(1):
             self.t.append(cm * self.t[-1])
 
-if globals().has_key('dbOscElmObj'):
+if  'dbOscElmObj' in globals():  #.has_key('dbOscElmObj'):
     dbOscElmObj.close()
     del (dbOscElmObj)
 dbOscElmObj = dbOscElm()
@@ -57,7 +64,7 @@ dbOscElmObj = dbOscElm()
 if __name__ == '__main__':
     bodies = (pn.Earth, pn.Jupiter)
     for body in bodies:
-        print pn.nmPlanet(body)
+        print (pn.nmPlanet(body))
         elms =dbOscElmObj.read_oscelm(body)
         for elm in elms:
-            print "%s" % elm.__repr__()
+            print ("%s" % elm.__repr__())

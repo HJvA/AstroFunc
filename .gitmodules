@@ -1,0 +1,3 @@
+[submodule "submod/pyCommon"]
+	path = submod/pyCommon
+	url = git@github.com:HJvA/pyCommon.git

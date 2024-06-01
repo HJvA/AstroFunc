@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 
 # from 'elpmpp02.pdf'
 # LUNAR SOLUTION ELP
@@ -15,7 +15,7 @@ from Rotation import DegAngle,ArcsAngle,Angle,Coordinate,PolarCoord,RotMatrix,Ro
 from AstroTypes import CelestialObj,datPath
 from Matrix import Matrix
 from AstroTime import AstroTime,JulianDay
-from AnyDB import AnyDB
+from AnyDB import AnyDB, dbConnect
 
 # W1, the mean mean longitude of the Moon,
 # W2, the mean longitude of the lunar perigee,
@@ -43,7 +43,7 @@ MeMargs = {
           ArcsAngle(-38.2631),
           ArcsAngle(-0.045047),
           ArcsAngle(0.00021301)),
-    'W3':(DegAngle(125,02,40.39816),
+    'W3':(DegAngle(125, 2,40.39816),
           ArcsAngle(-6967919.5383),
           ArcsAngle(6.359),
           ArcsAngle(0.007625),
@@ -130,21 +130,20 @@ def Correction(crCorr):
 #Correction(crLLR)
 
 PlanArgs = {  # mean longitudes and mean motions  (VSOP2000)
-    'Me':(DegAngle(252,15,03.216919),ArcsAngle(538101628.68888)),
+    'Me':(DegAngle(252,15, 3.216919),ArcsAngle(538101628.68888)),
     'Ve':(DegAngle(181,58,44.758419),ArcsAngle(210664136.45777)),
-    'Ma':(DegAngle(355,26,03.642778),ArcsAngle( 68905077.65936)),
-    'Ju':(DegAngle( 34,21,05.379392),ArcsAngle( 10925660.57335)),
-    'Sa':(DegAngle( 50,04,38.902495),ArcsAngle(  4399609.33632)),
-    'Ur':(DegAngle(314,03,04.354234),ArcsAngle(  1542482.57845)),
+    'Ma':(DegAngle(355,26, 3.642778),ArcsAngle( 68905077.65936)),
+    'Ju':(DegAngle( 34,21, 5.379392),ArcsAngle( 10925660.57335)),
+    'Sa':(DegAngle( 50, 4,38.902495),ArcsAngle(  4399609.33632)),
+    'Ur':(DegAngle(314, 3, 4.354234),ArcsAngle(  1542482.57845)),
     'Ne':(DegAngle(304,20,56.808371),ArcsAngle(   786547.897))
            }
-
-
 
 nodb = False
 def elpConnect():
     """ connect to elp mpp02 database
     """
+    return dbConnect('ELP.db')
     if sys.platform=="win32":
         if nodb:
             return None # let catalog define dbms
@@ -334,14 +333,14 @@ if __name__ == '__main__':
         app.close()
     def MoonPos(astm, precision=3):
         #astm = AstroTime(tm,UTCofs=0)
-        print "LocTm=%s JD=%f, UTCofs=%d" % (astm.LocalTime().AsHHMMSS(),JulianDay(tm),astm.UTCOffset)
+        print ("LocTm=%s JD=%f, UTCofs=%d" % (astm.LocalTime().AsHHMMSS(),JulianDay(tm),astm.UTCOffset))
         body = Moon(astm,precision)
-        print 'Ecliptic elp=%s' % body.elpEcliptic(precision)
-        print 'Ecliptic Of Date=%s' % body.EclipticOfDate(precision)
-        print 'Ecliptic J2000=%s' % body.EclipticJ2000(precision)
-        print 'GeoCentric J2000 X,Y,Z=',body
+        print ('Ecliptic elp=%s' % body.elpEcliptic(precision))
+        print ('Ecliptic Of Date=%s' % body.EclipticOfDate(precision))
+        print ('Ecliptic J2000=%s' % body.EclipticJ2000(precision))
+        print ('GeoCentric J2000 X,Y,Z=',body)
         #s = body.Polar().__repr__()
-        print 'GeoCentric J2000 Ra,decl,dist=%s, %s, %s' % body.Polar()
+        print ('GeoCentric J2000 Ra,decl,dist=%s, %s, %s' % body.Polar()) 
 
     import time
     tm = time.localtime()
@@ -362,7 +361,7 @@ if __name__ == '__main__':
           ('MoonPos precis5',  (MoonPos,    [ast,5]))
         )
     for i in range(len(prgs)):
-        print "%d.%s" % (i,prgs[i][0])
+        print ("%d.%s" % (i,prgs[i][0]))
     prg = int(raw_input("%d..%d? " % (0,len(prgs)-1)))
     prgs[prg][1][0](*prgs[prg][1][1])
     

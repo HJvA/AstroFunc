@@ -1,6 +1,70 @@
 # -*- coding: utf-8 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
+
+#from AstroTypes import CelestialObj,datPath
+import sys,os
+
+def dbConnect(dbFname, atPhone = False, datPath=r"../HastroDat"):
+    wildcard='*'
+    if sys.platform=="win32":
+        if atPhone:
+            import btDBclient
+            #ConStr = os.path.join(datPath, "Stars.db")
+            ConStr = dbFname # "stars.db"
+            dbms = btDBclient.connect(ConStr)
+        else:
+            import adodbapi
+            dsn=dbFname #'dsCATdat'
+            provider='MSDASQL'  # ODBC for OLEDB
+            dbms = adodbapi.connect('Data Source=%s;Provider=%s;'% (dsn,provider))
+            wildcard='%%'
+    elif sys.platform=="symbian_s60":
+        import dbS60
+        if '--dat' in sys.argv:
+            datPath = sys.argv[sys.argv.index('--dat')+1]
+        ConStr = os.path.join(datPath, dbFname) #r'stars.db')
+        dbms = dbS60.connect(ConStr)
+    elif sys.platform=="linux":
+        from sqlite3 import connect,OperationalError
+        store = os.path.join(datPath, dbFname) # r'stars.db')
+        store = os.path.expanduser(store) 
+
+        if not os.path.isfile(store):  # => create database
+            dbms=connect(store, check_same_thread=False)
+            if dbms:
+                dbms=dbCreate(dbms)
+            else:
+                print("Unable to create {}".format(store))
+        else:
+            dbms=connect(store, check_same_thread=False)
+    return dbms
+
+def dbCreate(con):
+		#logger.info("creating sqlStore in %s" % fname)
+		#con=connect(store, check_same_thread=False)
+		#con=dbConnect(fname)	# will create file
+		with con:
+			cur = con.cursor()
+			"""
+			cur.execute('CREATE TABLE logdat( '
+				'ddJulian REAL	NOT NULL,'
+				'quantity INT  NOT NULL,'
+				'numval	REAL,'
+				'strval  TEXT);' )
+			cur.execute('CREATE INDEX ld1 ON logdat(ddJulian,quantity);')
+			cur.execute('CREATE TABLE quantities( '
+				'ID	 INT PRIMARY KEY NOT NULL,'
+				"name  TEXT NOT NULL,"
+				"source TEXT,"
+				"type  INT,"
+				"active INT DEFAULT 1,"
+				"firstseen REAL);")
+			cur.execute("CREATE TABLE quantitytypes(ID INT PRIMARY KEY NOT NULL, name TEXT NOT NULL, unit TEXT);")
+			"""
+			cur.close()
+		return con
+
 
 class AnyDB:
     """ interface to an arbitrary database table.
@@ -26,23 +90,24 @@ class AnyDB:
         """
         # self.db = dbms.connect(ConStr)
         self.db = dbms
-        cur = self.db.cursor()
         self.AtCurs = None
         self.cond = ""
         self.MaxId=5 # existing tbl, no records
-        try:  # test presence of table
-            cur.execute(self.sqlMaxId % (self.KeyFld,self.dbTbl,self.KeyFld))
-            if cur.rowcount==-2:
-                raise RuntimeError, "remote tbl not found"
-        except:
-            cur.execute(self.sqlCreateTable)
+        with dbms:
+            cur = dbms.cursor()
+            try:  # test presence of table
+                cur.execute(self.sqlMaxId % (self.KeyFld,self.dbTbl,self.KeyFld))
+                if cur.rowcount==-2:
+                    raise RuntimeError( "remote tbl not found")
+            except:
+                cur.execute(self.sqlCreateTable)
             self.MaxId=10 # table created
-        if self.MaxId<10:
-            rec = cur.fetchone()
-            if not rec is None:
-                if len(rec)>0:
-                    self.MaxId=rec[0]  # existing records
-        self.db.commit()
+            if self.MaxId<10:
+                rec = cur.fetchone()
+                if not rec is None:
+                    if len(rec)>0:
+                        self.MaxId=rec[0]  # existing records
+            dbms.commit()
     def DropTable(self):
         cur = self.db.cursor()
         cur.execute("DROP TABLE %s" % self.dbTbl)
@@ -183,4 +248,10 @@ class AnyDB:
         self.db.close()  # will also close connection
     def commit(self):
         self.db.commit()
+
+if __name__ == '__main__':
+	dbms = dbConnect('stars.db')
+	db = AnyDB(dbms)
+	logger.info("mxId:{} nms:{}".format(db.MaxId,db.GetNames()))
+	db.close()
         

@@ -1,8 +1,10 @@
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 
 
 import Rotation
+from Rotation import Angle
+import math
 
 LightyearToParsec = 3.2616
 
@@ -31,14 +33,14 @@ class Parallax:
         return self.Vabs - 5 + 5*math.log10(self.distance)
 
 def _test():
-    print r'-5/4=%f' % (-5 % 4)
+    print (r'-5/4=%f' % (-5 % 4))
 
     par = Parallax()
     par.Vappar = 0.18
     par.distance = 773.0/LightyearToParsec
     par.Vabs = par.GetAbsMag()
-    print par.GetAbsMag()
-    print "%f %f" % (par.distance,par.GetDistance())
+    print (par.GetAbsMag())
+    print ("%f %f" % (par.distance,par.GetDistance()))
     
 
     

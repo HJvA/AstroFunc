@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 # copyright (c) 2007-2009 H.J.v.Aalderen
-# henk.jan.van.aalderen@gmail.com
+# 
 
 import sys
 import math
@@ -122,10 +122,10 @@ if __name__ == '__main__':
     for pnBody in pnBodies:
         body = BaseOscElements(pnBody, AstroTime.AstroTime(t))
         bodyCorr = OscElements(pnBody, AstroTime.AstroTime(t))
-        print '%s\t' % (pn.nmPlanet(pnBody))
-        print 'a=%.10f\t(%.10f)' % (body.SemiMajorAxis(),bodyCorr.SemiMajorAxis())
-        print 'I=%s\t(%s)' % (body.Inclination(),bodyCorr.Inclination())
-        print 'e=%.10f\t(%.10f)' % (body.Eccentricity(),bodyCorr.Eccentricity())
-        print 'L=%s\t(%s)' % (body.MeanLongitude(),bodyCorr.MeanLongitude())
-        print 'wp=%s\t(%s)' % (body.LongitudePerihelion(),bodyCorr.LongitudePerihelion())
-        print 'Wa=%s\t(%s)' % (body.LongitudeAscendingNode(),bodyCorr.LongitudeAscendingNode())
+        print ('%s\t' % (pn.nmPlanet(pnBody)))
+        print ('a=%.10f\t(%.10f)' % (body.SemiMajorAxis(),bodyCorr.SemiMajorAxis()))
+        print ('I=%s\t(%s)' % (body.Inclination(),bodyCorr.Inclination()))
+        print ('e=%.10f\t(%.10f)' % (body.Eccentricity(),bodyCorr.Eccentricity()))
+        print ('L=%s\t(%s)' % (body.MeanLongitude(),bodyCorr.MeanLongitude()))
+        print ('wp=%s\t(%s)' % (body.LongitudePerihelion(),bodyCorr.LongitudePerihelion()))
+        print ('Wa=%s\t(%s)' % (body.LongitudeAscendingNode(),bodyCorr.LongitudeAscendingNode()))
