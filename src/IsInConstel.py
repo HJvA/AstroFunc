@@ -3,8 +3,8 @@
 # info @ 
 
 import sys,os
-from AstroTypes import pn
-from AnyDB import AnyDB
+from AstroTypes import pn,datPath
+from AnyDB import AnyDB,dbConnect
 from Rotation import DegAngle
 from Constel import ClosestConstels
 
@@ -57,10 +57,11 @@ class dbConstelBnds(AnyDB):
             import adodbapi   # http://adodbapi.sourceforge.net/
             ConStr = 'Data Source=%s;' %   ('dsCATdat',)
             dbms = adodbapi.connect(ConStr)
-        else:   # symbian_S60 
-            import dbS60
-            ConStr = os.path.join(datPath, "stars.db")
-            dbms = dbS60.connect(ConStr)
+        else:   #            
+            dbms = dbConnect('stars.db',datPath)
+            #import dbS60
+            #ConStr = os.path.join(datPath, "stars.db")
+            #dbms = dbS60.connect(ConStr)
         AnyDB.__init__(self, dbms)
     
     def IsInConstel(self,ConstelId, Ra, Decl, RaZeroPass=0):
@@ -87,25 +88,25 @@ class dbConstelBnds(AnyDB):
         
 
 if __name__ == '__main__':
-    print "in polygon: %s , out polygon: %s " % (IsInPolygon((0.18,0.33), \
+    print ("in polygon: %s , out polygon: %s " % (IsInPolygon((0.18,0.33), \
             ((0.22,0.22),(0.26,0.23),(0.27,0.33),(0.34,0.4),(0.34,0.42),(0.14,0.42))), \
               IsInPolygon((0.17,0.33), \
-            ((0.22,0.22),(0.26,0.23),(0.27,0.33),(0.34,0.4),(0.34,0.42),(0.14,0.42))))
+            ((0.22,0.22),(0.26,0.23),(0.27,0.33),(0.34,0.4),(0.34,0.42),(0.14,0.42)))))
     dbConstBnds = dbConstelBnds()
-    print "auriga id=8 %s" % dbConstBnds.IsInConstel(8, DegAngle(90.4), DegAngle(40.4))
-    print dbConstBnds.FindConstel(DegAngle(90.5), DegAngle(40.5))
+    print ("auriga id=8 %s" % dbConstBnds.IsInConstel(8, DegAngle(90.4), DegAngle(40.4)))
+    print (dbConstBnds.FindConstel(DegAngle(90.5), DegAngle(40.5)))
     from CelestData import StarsListIds,StarObj,WriteConstellation
     lst = StarsListIds("WHERE (Vapparent>4 AND Vapparent<6 OR distance<4) ORDER BY Vapparent")
     for id in lst:
         obj = StarObj(id)
         ConstelId = dbConstBnds.FindConstel(obj.Longitude(), obj.Latitude())
         if ConstelId == None:
-            print "no constel for %s (%d) expected=%s" % (obj.name,obj.id,obj.ConstelId)
+            print ("no constel for %s (%d) expected=%s" % (obj.name,obj.id,obj.ConstelId))
         elif (obj.ConstelId != ConstelId):
             if obj.ConstelId == None:
-                print "set constel to %d for %s (id=%d)" % (ConstelId,obj.name,obj.id)
+                print ("set constel to %d for %s (id=%d)" % (ConstelId,obj.name,obj.id))
                 n=WriteConstellation(obj.id, ConstelId)
             else:
-                print "%s wrong constel %d != %d" % (obj.name,obj.ConstelId,ConstelId)
+                print ("%s wrong constel %d != %d" % (obj.name,obj.ConstelId,ConstelId))
 
 

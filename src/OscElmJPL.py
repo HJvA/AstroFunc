@@ -167,17 +167,17 @@ class OscElements(OscElm):
 
 def _test():
     pnBody = pn.Saturn
-    print _Planets[pnBody][0]
+    print (_Planets[pnBody][0])
     t = (2007, 4, 5, 14, 0, 0)
     pnBody = pn.idPlanet('saturn')
     body = OscElements(pnBody, AstroTime.AstroTime(t))
-    print pn.nmPlanet(pnBody)
-    print 'a=',body.SemiMajorAxis()
-    print 'I=%s' % body.Inclination()
-    print 'e=%s' % body.Eccentricity()
-    print 'L=%s' % body.MeanLongitude()
-    print 'wp=%s' % body.LongitudePerihelion()
-    print 'Wa=%s' % body.LongitudeAscendingNode()
+    print (pn.nmPlanet(pnBody))
+    print ('a=',body.SemiMajorAxis())
+    print ('I=%s' % body.Inclination())
+    print ('e=%s' % body.Eccentricity())
+    print ('L=%s' % body.MeanLongitude())
+    print ('wp=%s' % body.LongitudePerihelion())
+    print ('Wa=%s' % body.LongitudeAscendingNode())
 
 
 if __name__ == '__main__':

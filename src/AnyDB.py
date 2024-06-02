@@ -5,7 +5,7 @@
 #from AstroTypes import CelestialObj,datPath
 import sys,os
 
-def dbConnect(dbFname, atPhone = False, datPath=r"../HastroDat"):
+def dbConnect(dbFname, atPhone = False, datPath=r"HastroDat"):
     wildcard='*'
     if sys.platform=="win32":
         if atPhone:
@@ -29,8 +29,10 @@ def dbConnect(dbFname, atPhone = False, datPath=r"../HastroDat"):
         from sqlite3 import connect,OperationalError
         store = os.path.join(datPath, dbFname) # r'stars.db')
         store = os.path.expanduser(store) 
-
-        if not os.path.isfile(store):  # => create database
+        if not os.path.isabs(store):
+            store = os.path.abspath(store)
+        if not os.path.exists(store):  # => create database
+            breakpoint()
             dbms=connect(store, check_same_thread=False)
             if dbms:
                 dbms=dbCreate(dbms)
@@ -118,6 +120,9 @@ class AnyDB:
         if cond is None:
             cond=self.cond
         cur = self.db.cursor()
+        cur.execute(f"select * from {self.dbTbl}")
+        fields = [column[0] for column in cur.description]
+        return fields
         cur.execute(self.sqlSelNames % (self.NameFld, self.dbTbl, cond))
         lst = cur.fetchall()
         cur.close()
@@ -127,6 +132,7 @@ class AnyDB:
         """ Get index of NameFld in Fields list
         """
         return self.Fields.split(',').index(self.NameFld)
+    '''
     def ReloadRecord(self):
         """ cause recordset to be reloaded
         """
@@ -176,7 +182,20 @@ class AnyDB:
     def PrevRecord(self):
         self.GotoRecord(-2)
         return self.AtCurs.fetchone()
-
+    '''
+    def FirstRecord(self, cond=None):
+        self.AtCurs =None
+        self.cond = cond
+        return self.NextRecord()
+    def NextRecord(self):
+        if self.AtCurs is None:
+            #self.db.commit()
+            self.AtCurs = self.db.cursor()
+            self.AtCurs.execute(self.sqlSelect % (self.Fields+','+self.KeyFld, self.dbTbl, self.cond))
+        try:
+            return self.AtCurs.fetchone()
+        except IndexError:
+            return None
     def GetRecords(self, numb=1, cond="", sql=None):
         if not cond is None:
             self.cond=cond
@@ -200,7 +219,7 @@ class AnyDB:
             lst[:0] = [self.Fields+','+self.KeyFld]
         else:
             lst[:0] = Fields
-        return SqlExecute(self.sqlInsert % tuple(lst))
+        return self.SqlExecute(self.sqlInsert % tuple(lst))
         cur = self.db.cursor()
         cur.execute(self.sqlInsert % tuple(lst))
         return cur.rowcount
@@ -241,7 +260,7 @@ class AnyDB:
         cur = self.db.cursor()
         cur.execute(self.sqlDelete % (self.dbTbl,self.NameFld,Name))
     def RecordCount(self):
-        self.GotoRecord(0,'absolute')
+        #self.GotoRecord(0,'absolute')
         return self.AtCurs.rowcount
     def close(self):
         self.db.commit()
@@ -250,8 +269,15 @@ class AnyDB:
         self.db.commit()
 
 if __name__ == '__main__':
+	sys.path.append('.')
+	import submod.pyCommon.tls as tls
+	logger = tls.get_logger(__file__)
+
 	dbms = dbConnect('stars.db')
 	db = AnyDB(dbms)
 	logger.info("mxId:{} nms:{}".format(db.MaxId,db.GetNames()))
 	db.close()
+else:
+	import logging
+	logger = logging.getLogger(__name__)
         

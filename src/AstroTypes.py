@@ -10,15 +10,17 @@ AU = 1.495978e11  # m   (astronomical unit)
 ly = 9.46053e15   # m   (light year)
 pc = 3.085678e16  # m   (parsec) 
 
-modPath = os.path.split(sys.argv[0])[0]  #get prg name
-if not modPath in sys.path:
-    sys.path.append(modPath)
+#modPath = os.path.split(sys.argv[0])[0]  #get prg name
+modPath = os.path.dirname(__file__)
+#if not modPath in sys.path:
+#    sys.path.append(modPath)
 global datPath
-datPath = os.path.join(os.path.splitdrive(modPath)[0], r'\HastroDat')
-if not os.path.isdir(datPath):
-    datPath = os.path.join(modPath, r'HastroDat')
+#datPath = os.path.join(os.path.splitdrive(modPath)[0], r'..','HastroDat')
+datPath = os.path.abspath(os.path.join(modPath, '..','HastroDat'))
+#if not os.path.isdir(datPath):
+#    datPath = os.path.join(modPath, r'..','HastroDat')
     
-print (datPath)
+print ("module:{} dat:{}".format(modPath,datPath))
 del modPath
 
 class bo:

@@ -8,7 +8,7 @@ import string
 from CelestData import dbStarCat
 from ELPmpp02 import dbElpMain,dbElpPertub
 from Constel import dbConstels,ConstelList
-from AnyDb import dbConnect
+from AnyDB import dbConnect
 
 toPhone = False
 fromTxt = True
@@ -213,7 +213,7 @@ class ELPcopy:
             A=f.rdFloat()
             rec = (A,D,F,l,l_,idx)
             if nodb:
-                print rec
+                print (rec)
             else:
                 db.InsertRecord(rec)
                 db.commit()
@@ -236,7 +236,7 @@ class ELPcopy:
             for i in range(9):
                 rec.append(f.rdInt(len=3))
             if nodb:
-                print rec
+                print (rec)
             else:
                 db.InsertRecord(tuple(rec), Fields=db.KeyFld+','+db.Fields)
                 db.commit()
@@ -268,9 +268,9 @@ class SAOCopy:
                           'AND c.SAO IS NULL' % t)
                           #'AND (s.Ra BETWEEN %.8f AND %.8f) AND (s.decl BETWEEN %.8f AND %.8f) ' \
               if cur.rowcount==0:
-                  print 'unknown',t
+                  print ('unknown',t)
           else:
-              print 'bad',t
+              print ('bad',t)
           
           
 class HIPcopy:
@@ -297,7 +297,7 @@ class HIPcopy:
                           'Ra=%.10f,decl=%.10f,Parallax=%.2f ' \
                           'WHERE c.HIP=%d AND s.id=c.starId' % t)
               if cur.rowcount<=0:
-                  print 'unk',t
+                  print ('unk',t)
               dbms.commit()
       cur.close()
         
@@ -335,7 +335,7 @@ class ConstelBndsCopy:
             pabrev=abrev
             #id = self.Constels.index(abrev)
             if nodb:
-                print rec
+                print (rec)
             elif RaDeg and DEdeg:
                 RaDeg = 15*(RaDeg + RaMin/60.0 + RaSec/3600.0)
                 rec = (idx,RaDeg,DEdeg)
@@ -393,7 +393,7 @@ class Tycho1Copy:
             CCDM  =f.ReadItem(length=1,allowed='ABCDEFGHIJ')
             insert = False
             if nodb:
-                print rec
+                print (rec)
             elif pmRA and pmDE and RAdeg and DEdeg and VT:
                 if BT:
                     BT= "%.3f" % BT
@@ -480,7 +480,7 @@ class Tycho2Copy:
                   if cur.rowcount<=0:
                       insert = True
               else:
-                  print 'unk',t
+                  print ('unk',t)
           if  self.VT<MagLim and (insert):
               self.maxId+=1
               t = (self.BT,self.VT,self.pmRa,self.pmDe,self.mRa,self.mDe,self.maxId)
@@ -493,7 +493,7 @@ class Tycho2Copy:
                      cur.execute('INSERT INTO starcat (BT,VT,mRa,mdecl,Id) ' +
                          'VALUES (%.3f,%.3f,%.8f,%.8f,%d)' % t)
               if None in t:
-                  print 'bad',t,cur.rowcount
+                  print ('bad',t,cur.rowcount)
               else:
                   t = (self.maxId,self.TYC1,self.TYC2,self.TYC3)
                   cur.execute('INSERT INTO crossref (starId,TYC1,TYC2,TYC3) ' \

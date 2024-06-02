@@ -129,7 +129,7 @@ def _test():
     #lst = StarsList("WHERE distance<9.0")
     lst = StarsList("WHERE (Vapparent<6.5 OR distance<4) ORDER BY Vapparent")
     print (lst," len=%d" % len(lst))
-    idx=15
+    idx=5
     obj = StarObj(lst[idx])
     print ("%s geocentric J2000 coord: " % lst[idx],obj)
     obj = StarObj('arcturus')

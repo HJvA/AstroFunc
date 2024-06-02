@@ -194,11 +194,11 @@ if __name__ == '__main__':
     t = time.localtime()
     body = MoonBase(AstroTime(t))
     bodyCorr = MoonJ2000(AstroTime(t))
-    print '%s\t' % body.name
-    print 'a=%.10f\t(%.10f)' % (body.SemiMajorAxis(),bodyCorr.SemiMajorAxis())
-    print 'I=%s\t(%s)' % (body.Inclination(),bodyCorr.Inclination())
-    print 'e=%.10f\t(%.10f)' % (body.Eccentricity(),bodyCorr.Eccentricity())
-    print 'L=%s\t(%s)' % (body.MeanLongitude(),bodyCorr.MeanLongitude())
-    print 'wp=%s\t(%s)' % (body.LongitudePerihelion(),bodyCorr.LongitudePerihelion())
-    print 'Wa=%s\t(%s)' % (body.LongitudeAscendingNode(),bodyCorr.LongitudeAscendingNode())
+    print ('%s\t' % body.name)
+    print ('a=%.10f\t(%.10f)' % (body.SemiMajorAxis(),bodyCorr.SemiMajorAxis()))
+    print ('I=%s\t(%s)' % (body.Inclination(),bodyCorr.Inclination()))
+    print ('e=%.10f\t(%.10f)' % (body.Eccentricity(),bodyCorr.Eccentricity()))
+    print ('L=%s\t(%s)' % (body.MeanLongitude(),bodyCorr.MeanLongitude()))
+    print ('wp=%s\t(%s)' % (body.LongitudePerihelion(),bodyCorr.LongitudePerihelion()))
+    print ('Wa=%s\t(%s)' % (body.LongitudeAscendingNode(), bodyCorr.LongitudeAscendingNode()))
 

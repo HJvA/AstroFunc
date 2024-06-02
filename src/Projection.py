@@ -73,7 +73,7 @@ class StereographicEquatorial(projection):
         return (x,y)
         
 if __name__ == '__main__':
-    print ("projection mercator")
+    print("projection mercator")
     vec = Stereographic([1.0, 0.0, 1.0])
     onMap = vec.toMap()
     print ("vec %s onMap:%s" % (vec.fromMap(onMap[0],onMap[1]), onMap))

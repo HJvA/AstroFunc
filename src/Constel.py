@@ -11,7 +11,7 @@ toPhone   = False
 ConstelCat= None
 
 if dbConstel:
-    from AnyDB import AnyDB
+    from AnyDB import AnyDB,dbConnect
     wildcard='*'
     if sys.platform=="win32":
         if toPhone:
@@ -25,13 +25,14 @@ if dbConstel:
             provider='MSDASQL'  # ODBC for OLEDB
             dbms = adodbapi.connect('Data Source=%s;'% (dsn))
             wildcard='%%'
-
     elif sys.platform=="symbian_s60":
         import os,dbS60
         if '--dat' in sys.argv:
             datPath = sys.argv[sys.argv.index('--dat')+1]
         ConStr = os.path.join(datPath, r'stars.db')
         dbms = dbS60.connect(ConStr)
+    else:
+        dbms = dbConnect('stars.db')
 
     class dbConstels(AnyDB):
         """ define database structure by overriding virtual members from AnyDB
@@ -132,15 +133,13 @@ if __name__ == '__main__':
         app.run("ConstelBrowser")
         app.close()
     lst = ConstelList()
-    print lst," len=%d" % len(lst)
-    idx=13
+    print (lst," len=%d" % len(lst))
+    idx=5
     obj = ConstelObj(lst[idx])
-    print "%s geocentric J2000 coord: " % lst[idx],obj
+    print ("%s geocentric J2000 coord: %s" % (lst[idx],obj))
     body = CelestialObj(obj.Longitude(), obj.Latitude(), 1)
-    print "Body  lon=%s, lat=%s " % \
-          (body.Longitude().AsHHMMSS(), body.Latitude())
+    print ("Body  lon=%s, lat=%s " % (body.Longitude().AsHHMMSS(), body.Latitude()))
     ids = ClosestConstels(body.RightAscension(),body.Declination())
-    print "ClosestConstels: %s" % ids
+    print ("ClosestConstels: %s" % ids)
     obj = ConstelObjOfBody(body)
-    print "Constel=%s lon=%s, lat=%s id=%d" % \
-          (obj.name, obj.Longitude().AsHHMMSS(), obj.Latitude(), obj.ConstelId)
+    print ("Constel=%s lon=%s, lat=%s id=%d" %  (obj.name, obj.Longitude().AsHHMMSS(), obj.Latitude(), obj.ConstelId))
