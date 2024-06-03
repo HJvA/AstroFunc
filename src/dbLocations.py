@@ -21,12 +21,15 @@ if sys.platform=="win32":
     ConStr = 'Provider=%s;Data Source=%s;User ID=%s;Password=%s;' % \
              ('MSDASQL',  'dsLOCSdb',    'Admin',   '')
     dbms = adodbapi.connect(ConStr)
-else:   # symbian_S60 
+elif sys.platform=="symbian_s60":   # symbian_S60 
     import appuifw  #e32db,e32
     #ChkSrcPath('subs')
     import dbS60
     ConStr = os.path.join(datPath, "GeoLocs.db")
     dbms = dbS60.connect(ConStr)
+else:
+    import AnyDB
+    dbms = AnyDB.dbConnect('GeoLocs.db')
 
 from dbGeoLocs import dbGeoLocs # get db scheme definition
 
@@ -75,7 +78,7 @@ class LocationsDB(dbGeoLocs):
         
 if __name__ == '__main__':
     from Rotation import DegAngle
-    print ConStr
+    #print (ConStr)
     app = LocationsDB()
     sites =\
       [GeoSite(('Veldhoven',5.4, 51.4, 20, 1)),
@@ -88,10 +91,10 @@ if __name__ == '__main__':
        GeoSite(('Beijing',  DegAngle(116,23,15).deg, DegAngle(39,54,45).deg, 50,  8)),
        GeoSite(('Buenos Aires',  DegAngle(-58,-23,-29).deg, DegAngle(-34,-35,-24).deg, 32,  -3)),
        GeoSite(('New York',  DegAngle(-74,-1,0).deg, DegAngle(40,42,13).deg, 3,  -5))]
-    print app.MaxId
+    print (app.MaxId)
     app.DeleteRecord('Nizas')
     for site in sites:
         app.CheckRecord(site.GetRecord())
-    print app.GetNames()
+    print (app.GetNames())
     app.close()
     

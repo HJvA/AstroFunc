@@ -232,28 +232,29 @@ class AnyDB:
         Nidx = self.GetNameIdx()
         cur.execute(self.sqlGetId % \
                     (self.KeyFld,self.dbTbl,self.NameFld,Record[Nidx]))  # check presence of NameFld
+        rwcnt = cur.rowcount
         values = list(Record)
         lst = None
         if cur.rowcount<0: # rowcount not supported for some dbms
             lst = cur.fetchone()
             if lst is None:
-                cur.rowcount=0
+                rwcnt=0
             elif len(lst)==0:
-                cur.rowcount=0
+                rwcnt=0
             else:
-                cur.rowcount=1
-        if cur.rowcount==0:   # INSERT
+                rwcnt=1
+        if rwcnt==0:   # INSERT
             self.MaxId+=1
             values.append(self.MaxId)   # key at end
             values[:0] = [self.Fields+','+self.KeyFld]  # insert at start
             cur.execute(self.sqlInsert % tuple(values))
-        elif cur.rowcount==1:  # UPDATE
+        elif rwcnt==1:  # UPDATE
             if lst is None:
                 lst = cur.fetchone()
             values.append(lst[0])
             cur.execute(self.sqlUpdate % tuple(values))
         else:
-            assert 0,"names must be unique"
+            assert (0,"names must be unique")
     def DeleteRecord(self, Name):
         """ delete record having name from table
         """

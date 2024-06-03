@@ -594,7 +594,7 @@ class CrossCatCopy:
                          % (int(self.Flamsteed), self.id))
 
 if __name__ == '__main__':
-
+    import beaupy
     prgs = \
         (
           ('CrossCatCopy', (CrossCatCopy, [DestDbms])),
@@ -613,8 +613,9 @@ if __name__ == '__main__':
           ('ConstelBndsCopy', (ConstelBndsCopy,[DestDbms])),
           ('btConstelCopy', (btConstelCopy,[]))
         )
-    for i in range(len(prgs)):
-        print ("%d.%s" % (i,prgs[i][0]))
-    prg = int(raw_input("%d..%d? " % (0,len(prgs)-1)))
+    prg = beaupy.select([r[0] for r in prgs], return_index=True)
+    #for i in range(len(prgs)):
+    #    print ("%d.%s" % (i,prgs[i][0]))
+    #prg = int(raw_input("%d..%d? " % (0,len(prgs)-1)))
     prgs[prg][1][0](*prgs[prg][1][1])  # calling the choice
  

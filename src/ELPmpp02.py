@@ -326,6 +326,7 @@ class Moon(CelestialObj):
         return crd.Rotated(RotMatrix(ArcsAngle(-self.ObliquityJ2000), RotAx.R1))
 
 if __name__ == '__main__':
+    
     def ElpBrowser(db):
         import dbBrowser
         app = dbBrowser.dbBrowser(db)
@@ -342,6 +343,7 @@ if __name__ == '__main__':
         #s = body.Polar().__repr__()
         print ('GeoCentric J2000 Ra,decl,dist=%s, %s, %s' % body.Polar()) 
 
+    import beaupy
     import time
     tm = time.localtime()
     tm = (1980, 1, 1, 0, 0, 0)
@@ -360,8 +362,9 @@ if __name__ == '__main__':
           ('MoonPos precis4',  (MoonPos,    [ast,4])),
           ('MoonPos precis5',  (MoonPos,    [ast,5]))
         )
-    for i in range(len(prgs)):
-        print ("%d.%s" % (i,prgs[i][0]))
-    prg = int(raw_input("%d..%d? " % (0,len(prgs)-1)))
+    prg = beaupy.select([rec[0] for rec in prgs], return_index=True)
+    #for i in range(len(prgs)):
+    #    print ("%d.%s" % (i,prgs[i][0]))
+    #prg = int(raw_input("%d..%d? " % (0,len(prgs)-1)))
     prgs[prg][1][0](*prgs[prg][1][1])
     
