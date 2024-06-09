@@ -9,6 +9,8 @@ from CelestData import dbStarCat
 from ELPmpp02 import dbElpMain,dbElpPertub
 from Constel import dbConstels,ConstelList
 from AnyDB import dbConnect
+sys.path.append('.')
+import submod.pyCommon.tls as tls # get_logger
 
 toPhone = False
 fromTxt = True
@@ -83,7 +85,8 @@ SAOcat    = 'H:\\projects\\AstroFunc\\doc\\catalogs\\I-131A SAO\\sao'
 HIPcat    = 'H:\\projects\\AstroFunc\\doc\\catalogs\\hipparcos\\I-311\\hip2.dat'
 fELPmain  = 'H:\\projects\\AstroFunc\\doc\\moon\\elp\\mpp02\\ELP_MAIN.S%d'
 fELPpertub= 'H:\\projects\\AstroFunc\\doc\\moon\\elp\\mpp02\\ELP_PERT.S%d'
-fConstelBnds = 'C:\\projects\\AstroFunc\\doc\\catalogs\\VI-49 constel_bound\\asu.tsv'
+# wget http://cdsarc.u-strasbg.fr/ftp/VI/49/bound_20.dat.gz
+fConstelBnds = '/home/pi/astroDat/asu.tsv'  # 'C:\\projects\\AstroFunc\\doc\\catalogs\\VI-49 constel_bound\\asu.tsv'
 
 greekl = ('alf','bet','gam','del','eps','zet','eta','the','iot','kap','lam','mu.',
           'nu.','ksi','omi','pi.','rho','sig','tau','ups','phi','chi','psi','ome')
@@ -595,6 +598,7 @@ class CrossCatCopy:
 
 if __name__ == '__main__':
     import beaupy
+    logger = tls.get_logger(__file__,logging.INFO,logging.DEBUG)
     prgs = \
         (
           ('CrossCatCopy', (CrossCatCopy, [DestDbms])),

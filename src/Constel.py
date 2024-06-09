@@ -121,7 +121,7 @@ if dbConstel:
         """
         global ConstelCat
         if ConstelCat is None:
-            ConstelCat = dbConstels()
+            ConstelCat = dbConstel()
         #if not cond is None:
             #StarCat.cond = cond
         return ConstelCat.GetNames(cond)
