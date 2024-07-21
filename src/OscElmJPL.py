@@ -166,10 +166,11 @@ class OscElements(OscElm):
         #   OscElm.LongitudeAscendingNode(self,1) * self.TJ2000)
 
 def _test():
-    pnBody = pn.Saturn
+    pnBody = pn.Mars
     print (_Planets[pnBody][0])
     t = (2007, 4, 5, 14, 0, 0)
-    pnBody = pn.idPlanet('saturn')
+    t = (2000, 1, 1, 12, 0, 0)
+    #pnBody = pn.idPlanet('saturn')
     body = OscElements(pnBody, AstroTime.AstroTime(t))
     print (pn.nmPlanet(pnBody))
     print ('a=',body.SemiMajorAxis())

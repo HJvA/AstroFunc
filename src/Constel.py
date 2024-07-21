@@ -9,6 +9,56 @@ from Rotation import DegAngle,SQR,AngDiff
 dbConstel = True
 toPhone   = False
 ConstelCat= None
+""" https://ssd.jpl.nasa.gov/horizons/manual.html#constellations
+        _______________________________________________________________
+       | Abbrev. | Constellation Name | | Abbrev. | Constellation Name |
+       |_________|____________________|_|_________|____________________|
+       | And     | Andromeda          | | Leo     | Leo                |
+       | Ant     | Antila             | | LMi     | Leo Minor          |
+       | Aps     | Apus               | | Lep     | Lepus              |
+       | Aqr     | Aquarius           | | Lib     | Libra              |
+       | Aql     | Aquila             | | Lup     | Lupus              |
+       | Ara     | Ara                | | Lyn     | Lynx               |
+       | Ari     | Aries              | | Lyr     | Lyra               |
+       | Aur     | Auriga             | | Men     | Mensa              |
+       | Boo     | Bootes             | | Mic     | Microscopium       |
+       | Cae     | Caelum             | | Mon     | Monoceros          |
+       | Cam     | Camelopardis       | | Mus     | Musca              |
+       | Cnc     | Cancer             | | Nor     | Norma              |
+       | CVn     | Canes Venatici     | | Oct     | Octans             |
+       | CMa     | Canis Major        | | Oph     | Ophiuchus          |
+       | CMi     | Canis Minor        | | Ori     | Orion              |
+       | Cap     | Capricornus        | | Pav     | Pavo               |
+       | Car     | Carina             | | Peg     | Pegasus            |
+       | Cas     | Cassiopeia         | | Per     | Perseus            |
+       | Cen     | Centaurus          | | Phe     | Phoenix            |
+       | Cep     | Cepheus            | | Pic     | Pictor             |
+       | Cet     | Cetus              | | Psc     | Pisces             |
+       | Cha     | Chamaeleon         | | PsA     | Pisces Austrinus   |
+       | Cir     | Circinus           | | Pup     | Puppis             |
+       | Col     | Columba            | | Pyx     | Pyxis              |
+       | Com     | Coma Berenices     | | Ret     | Reticulum          |
+       | CrA     | Corona Australis   | | Sge     | Sagitta            |
+       | CrB     | Corona Borealis    | | Sgr     | Sagittarius        |
+       | Crv     | Corvus             | | Sco     | Scorpius           |
+       | Crt     | Crater             | | Scl     | Sculptor           |
+       | Cru     | Crux               | | Sct     | Scutum             |
+       | Cyg     | Cygnus             | | Ser     | Serpens            |
+       | Del     | Delphinus          | | Sex     | Sextans            |
+       | Dor     | Dorado             | | Tau     | Taurus             |
+       | Dra     | Draco              | | Tel     | Telescopium        |
+       | Equ     | Equuleus           | | Tri     | Triangulum         |
+       | Eri     | Eridanus           | | TrA     | Triangulum Australe|
+       | For     | Fornax             | | Tuc     | Tucana             |
+       | Gem     | Gemini             | | UMa     | Ursa Major         |
+       | Gru     | Grus               | | UMi     | Ursa Minor         |
+       | Her     | Hercules           | | Vel     | Vela               |
+       | Hor     | Horologium         | | Vir     | Virgo              |
+       | Hya     | Hydra              | | Vol     | Volans             |
+       | Hyi     | Hydrus             | | Vul     | Vulpecula          |
+       | Ind     | Indus              | |         |                    |
+       | Lac     | Lacerta            | |         |                    |
+       |_________|____________________|_|_________|____________________|  """
 
 if dbConstel:
     from AnyDB import AnyDB,dbConnect
