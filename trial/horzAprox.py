@@ -1,9 +1,11 @@
 # https://ssd.jpl.nasa.gov/planets/approx_pos.html
 import math,sys,os
 sys.path.append('.')
-from Rotation import Angle,RotMatrix,RotAx,DegAngle,Coordinate
+import lib
+from lib.Matrix import Matrix,Vector
+from lib.Rotation import Angle,RotMatrix,RotAx,DegAngle,Coordinate
 from submod.pyCommon.brentRoot import BrentRootFinder
-from Matrix import Matrix,Vector
+
 
 G = 6.7430e-11  # gravitational constant [N⋅m2⋅kg−2],  F = G⋅(m1⋅m2)/rˆ2
 AU = 1.495978707e11 # astronomical unit [m] 
